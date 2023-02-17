@@ -54,7 +54,7 @@ def item_category():
 @app.route('/item-category/add', methods=["POST"])
 def add_category():
     name = request.form['name']
-    logic.add_category(name)
+    db.add_category(name)
     return redirect('/item-category')
 
 
@@ -62,14 +62,14 @@ def add_category():
 def edit_category():
     old_name = request.form['old-name']
     new_name = request.form['new-name']
-    logic.change_category(old_name, new_name)
+    db.change_category(old_name, new_name)
     return redirect('/item-category')
 
 
 @app.route('/item-category/delete', methods=["POST"])
 def delete_category():
     delete_name = request.form['delete-name']
-    logic.delete_category(delete_name)
+    db.delete_category(delete_name)
     return redirect('/item-category')
 
 
@@ -79,7 +79,7 @@ def edit_order():
     for idx, category in enumerate(request.form):
         to_update.append({'name': category, 'order_index': idx + 1})
 
-    logic.change_order(to_update)
+    db.change_order(to_update)
     return redirect('/item-category')
 
 
@@ -112,6 +112,7 @@ def import_preview():
         return '<tr class="new-row"><td>{}</td><td>{}</td></tr>'.format(data[0][0], data[0][1])
     except:
         return "Ошибка загрузки данных. Вероятно, вы указали неправильные параметры."
+
 
 @app.route('/import', methods=['POST'])
 def import_items_post():
