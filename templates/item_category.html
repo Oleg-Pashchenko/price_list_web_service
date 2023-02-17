@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.10.2/Sortable.min.js"></script>
+
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -14,7 +16,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
-
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            $("#sortable").sortable();
+            $("#sortable").disableSelection();
+        });
+    </script>
     <title>Категории товара</title>
 </head>
 <body>
@@ -46,103 +58,113 @@
     </div>
 </nav>
 <div class="container my-5">
-    <h2 class="text-center mb-3">Manage Categories</h2>
+    <h2 class="text-center mb-3">Управление категориями</h2>
     <!-- Navs for switching between tasks -->
     <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#create-category">Create Category</a>
+            <a class="nav-link active" data-toggle="tab" href="#show-categories">Созданные категории</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#edit-category">Edit Category</a>
+            <a class="nav-link" data-toggle="tab" href="#create-category">Создать категорию</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#delete-category">Delete Category</a>
+            <a class="nav-link" data-toggle="tab" href="#edit-category">Изменить категорию</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#change-order">Change Order</a>
+            <a class="nav-link" data-toggle="tab" href="#delete-category">Удалить категорию</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#change-order">Изменить порядок категорий</a>
         </li>
     </ul>
     <!-- Tab panes for each task -->
     <div class="tab-content">
-        <!-- Create Category Tab -->
-        <div class="tab-pane container active" id="create-category">
-            <form>
+        <div class="tab-pane container active" id="show-categories">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Название категории</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for category in categories %}
+                    <tr>
+                        <th scope="row">{{ category.order_index }}</th>
+                        <td>{{ category.name }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="tab-pane container" id="create-category">
+            <form action="/item-category/add" method="post">
                 <div class="form-group">
-                    <label for="category-name">Category Name</label>
-                    <input type="text" class="form-control" id="category-name" placeholder="Enter category name">
+                    <label for="category-name">Наименование</label>
+                    <input type="text" class="form-control" id="category-name" name="name"
+                           placeholder="Введите имя категории">
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Отправить</button>
             </form>
         </div>
 
         <!-- Edit Category Tab -->
         <div class="tab-pane container" id="edit-category">
-            <form>
+            <form action="/item-category/edit" method="post">
                 <div class="form-group">
-                    <label for="category-select">Select Category</label>
-                    <select class="form-control" id="category-select">
-                        <option>Select a category</option>
+                    <label for="category-select">Выберите категорию</label>
+                    <select class="form-control" id="category-select" name="old-name">
+                        {% for category in categories %}
+                            <option>{{ category.name }} </option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="edit-category-name">Edit Category Name</label>
+                    <label for="edit-category-name">Новое имя категории</label>
                     <input type="text" class="form-control" id="edit-category-name"
-                           placeholder="Enter new category name">
+                           placeholder="Введите имя категории" name="new-name">
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Отправить</button>
             </form>
         </div>
 
         <!-- Delete Category Tab -->
         <div class="tab-pane container" id="delete-category">
-            <form>
+            <form action="/item-category/delete" method="post">
                 <div class="form-group">
-                    <label for="delete-category-select">Select Category</label>
-                    <select class="form-control" id="delete-category-select">
-                        <option>Select a category</option>
+                    <label for="category-select">Выберите категорию</label>
+                    <select class="form-control" id="category-select" name="delete-name">
+                        {% for category in categories %}
+                            <option>{{ category.name }} </option>
+                        {% endfor %}
                     </select>
                 </div>
-                <button type="submit" class="btn btn-danger">Delete</button>
+                <button type="submit" class="btn btn-danger">Удалить</button>
             </form>
         </div>
 
         <!-- Change Order Tab -->
         <div class="tab-pane container" id="change-order">
-            <form>
+            <form action="/item-category/edit-order" method="post">
                 <div class="form-group">
-                    <label for="order-category-select">Select Category</label>
-                    <select class="form-control" id="order-category-select">
-                        <option>Select a category</option>
-                    </select>
+                    <div class="container">
+                        <h3>Перетаскивайте категории для того чтобы поставить их в нужном порядке</h3>
+
+                        <ul id="sortable" class="list-group" id="new-order">
+                            {% for category in categories %}
+                                <li class="list-group-item"><input name="{{ category.name }}" type="hidden">{{ category.name }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
                     <div class="d-flex justify-content-between mt-3">
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                        <button type="button" class="btn btn-danger" data-toggle="modal"
-                                data-target="#deleteCategoryModal">
-                            Delete Category
-                        </button>
+                        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
                     </div>
                 </div>
             </form>
-            <div class="modal fade" id="deleteCategoryModal" tabindex="-1" role="dialog"
-                 aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deleteCategoryModalLabel">Delete Category</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            Are you sure you want to delete this category?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-danger">Delete</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="fixed-bottom">
             <footer class="bg-dark text-center text-white">

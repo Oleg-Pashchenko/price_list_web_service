@@ -43,44 +43,92 @@
         </ul>
     </div>
 </nav>
- <div class="container mt-5">
-    <h1 class="text-center">Price List Processing</h1>
-    <form>
-      <div class="form-group">
-        <label for="fileUpload">Upload Price List</label>
-        <input type="file" class="form-control-file" id="fileUpload">
-      </div>
-      <div class="form-group">
-        <label for="selectSupplier">Select Supplier</label>
-        <select class="form-control" id="selectSupplier">
-          <option>Supplier 1</option>
-          <option>Supplier 2</option>
-          <option>Supplier 3</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="selectDate">Select Date</label>
-        <input type="date" class="form-control" id="selectDate" value="{{ current_date }}">
-      </div>
-      <h3>Settings</h3>
-      <div class="form-group">
-        <label for="setting1">Setting 1</label>
-        <input type="text" class="form-control" id="setting1" value="Default value">
-      </div>
-      <div class="form-group">
-        <label for="setting2">Setting 2</label>
-        <input type="text" class="form-control" id="setting2" value="Default value">
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
+<div class="container mt-5">
+    <h1 class="text-center">Импорт прайс листа</h1>
+    <form action="/import" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="fileUpload">Загрузить прайс лист</label>
+            <input type="file" class="form-control-file" id="fileUpload" name="fileUpload" required>
+        </div>
+        <div class="form-group">
+            <label for="selectSupplier">Выберите поставщика</label>
+            <select class="form-control" id="selectSuppwlier" name="selectSupplier">
+                {% for supplier in suppliers %}
+                    <option> {{ supplier }} </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="selectDate">Выберите дату</label>
+            <input type="date" class="form-control" id="selectDate" name="selectDate" value="{{ current_date }}"
+                   required>
+        </div>
+        <h3>Настройки парсинга:</h3>
+        <div class="form-group">
+            <label for="setting1">Номер строки</label>
+            <input type="text" class="form-control" id="setting1" name="string_number" value={{ string_number }}>
+        </div>
+        <div class="form-group">
+            <label for="setting2">Столбец наименований постовщика:</label>
+            <input type="text" class="form-control" id="setting2" name="supplier_col" value={{ supplier_col }}>
+        </div>
+        <div class="form-group">
+            <label for="setting2">Столбец цен:</label>
+            <input type="text" class="form-control" id="setting3" name="price_col" value={{ price_col }}>
+        </div>
+        <h3>Первая строчка по заданным параметрам:</h3>
+        <div class="form-group">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>название</th>
+                    <th>цена</th>
+                </tr>
+                </thead>
+                <tbody id="table-body">
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
     </form>
-  </div>
+</div>
 <div>
-<footer class="bg-dark text-center text-white">
-    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-        Developed by
-        <a class="text-white" href="https:/t.me/ya_prosto_ystal">Oleg Pashchenko</a>
+    <div>
+        <footer class="bg-dark text-center text-white">
+            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                Developed by
+                <a class="text-white" href="https:/t.me/ya_prosto_ystal">Oleg Pashchenko</a>
+            </div>
+        </footer>
     </div>
-</footer>
 </div>
 </body>
+<script>
+    document.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        fetch('/import/preview', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.text())
+            .then(rowHtml => {
+                // Append the new row to the table
+                const tableBody = document.getElementById('table-body');
+                tableBody.innerHTML = "";
+                tableBody.insertAdjacentHTML('beforeend', rowHtml);
+
+                // Remove the 'new-row' class from the new row after a short delay
+                const newRows = document.querySelectorAll('.new-row');
+                newRows.forEach(row => {
+                    setTimeout(() => {
+                        row.classList.remove('new-row');
+                    }, 1000);
+                });
+            });
+    });
+</script>
 </html>

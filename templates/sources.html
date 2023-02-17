@@ -74,28 +74,27 @@
     </table>
         </div>
         <div class="tab-pane container" id="create-edit-delete-supplier">
-            <form>
+            <form action="/sources/edit" method="post">
                 <div class="form-group">
                     <label for="supplier-name">Наименование поставщика:</label>
-                    <input type="text" class="form-control" id="supplier-name" required>
+                    <input type="text" class="form-control" id="supplier-name" name="supplier-name" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Создать</button>
-                <button type="submit" class="btn btn-danger">Удалить</button>
+                <button type="submit" class="btn btn-primary">Изменить</button>
             </form>
         </div>
         <div class="tab-pane container" id="set-default-settings">
-            <form>
+            <form action="/sources/defaults" method="post">
                 <div class="form-group">
-                    <label for="start-row-input">Номер строки:</label>
-                    <input type="number" class="form-control" id="start-row-input" value="{{ defaults.string_number }}" required>
+                    <label for="string_number">Номер строки:</label>
+                    <input type="number" class="form-control" id="string_number" name="string_number" value="{{ defaults.string_number }}" required>
                 </div>
                 <div class="form-group">
-                    <label for="supplier-name-column-input">Столбец наименований постовщика:</label>
-                    <input type="text" class="form-control" id="supplier-name-column-input" value="{{ defaults.column_name }}" required>
+                    <label for="col_name">Столбец наименований постовщика:</label>
+                    <input type="text" class="form-control" id="col_name" name="col_name" value="{{ defaults.column_name }}" required>
                 </div>
                 <div class="form-group">
-                    <label for="price-column-input">Столбец цен:</label>
-                    <input type="text" class="form-control" id="price-column-input" value="{{ defaults.column_price }}" required>
+                    <label for="col_price">Столбец цен:</label>
+                    <input type="text" class="form-control" id="col_price" name="col_price" value="{{ defaults.column_price }}" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Обновить</button>
             </form>

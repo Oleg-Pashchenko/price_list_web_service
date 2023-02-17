@@ -1,5 +1,1 @@
-{
-  "string_number": 3,
-  "column_name": "D",
-  "column_price": "F"
-}
+{"string_number": "10", "column_name": "A", "column_price": "B"}

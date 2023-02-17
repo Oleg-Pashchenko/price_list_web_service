@@ -14,7 +14,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
     <title>Цены</title>
 </head>
 <body>
@@ -47,62 +52,69 @@
 
 
 <div class="container mt-5">
-    <h1 class="text-center">Product pricing</h1>
+    <h1 class="text-center">Цены на товары</h1>
     <form action="" method="post">
         <div class="form-group">
             <div class="form-group">
                 <label for="inputDate">Введите начало промежутка:</label>
                 <input id="inputDate" type="date" class="form-control">
             </div>
-             <div class="form-group">
+            <div class="form-group">
                 <label for="inputDate2">Введите конец промежутка:</label>
                 <input id=inputDate2"" type="date" class="form-control">
             </div>
         </div>
         <div class="form-group">
-            <label for="category_filter">Category Filter:</label>
+            <label for="category_filter">Фильтр категорий:</label>
             <select class="form-control" id="category_filter">
-                <option value="">All</option>
+                <option value="">Все</option>
                 {% for category in categories %}
                     <option value="{{ category.id }}">{{ category.name }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="form-group">
-            <label for="price_filter">Price Filter:</label>
+            <label for="price_filter">Фильтр цены:</label>
             <select class="form-control" id="price_filter">
                 <option value="">All</option>
-                <option value="available">Available</option>
-                <option value="unavailable">Unavailable</option>
+                <option value="not_setted">Все</option>
+                <option value="available">Есть</option>
+                <option value="unavailable">Нет</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="sort">Sort:</label>
+            <label for="sort">Сортировка:</label>
             <select class="form-control" id="sort">
-                <option value="">None</option>
-                <option value="price">Price</option>
-                <option value="category">Category</option>
-                <option value="product">Product</option>
+                <option value="">Нет</option>
+                <option value="price">Цена</option>
+                <option value="category">Категория</option>
+                <option value="product">Продукт</option>
             </select>
         </div>
         <div class="form-group">
-            <label for="search">Search:</label>
+            <label for="search">Поиск по запросу:</label>
             <input type="text" class="form-control" id="search">
         </div>
-        <button type="submit" class="btn btn-success">Submit</button>
-        <a href="" class="btn btn-primary">Export</a>
+        <button type="submit" class="btn btn-success">Получить данные</button>
+        <a href="" class="btn btn-primary">Экспортировать</a>
     </form>
     <br>
     <table class="table">
         <thead>
         <tr>
-            <th>Category</th>
-            <th>Product</th>
-            <th>Best Price</th>
-            <th>Supplier</th>
+            <th>Категория</th>
+            <th>Продукт</th>
+            <th>Лучшая цена</th>
+            <th>Поставщик</th>
         </tr>
         </thead>
         <tbody>
+        <tr data-toggle="modal" data-target="#exampleModal">
+            <td>Тест категория</td>
+            <td>Тест имя</td>
+            <td>Тест лучшая цена</td>
+            <td>Тест поставщик</td>
+        </tr>
         {% for product in products %}
             <tr>
                 <td>{{ product.category }}</td>
@@ -114,6 +126,139 @@
         </tbody>
     </table>
 </div>
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Информация о товаре</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Поставщик</th>
+                        <th scope="col">Цена</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Поставщик 1</td>
+                        <td>110</td>
+                    </tr>
+                    <tr>
+                        <td>Поставщик 2</td>
+                        <td>120</td>
+                    </tr>
+                    <tr>
+                        <td>Поставщик 3</td>
+                        <td>130</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>График цен поставщиков</h1>
+            <!-- Форма для фильтрации поставщиков -->
+            <form>
+                <div class="form-group">
+                    <label for="supplierSelect">Выберите поставщика:</label>
+                    <select class="form-control" id="supplierSelect">
+                        <option value="all">Все</option>
+                        <option value="supplier1">Поставщик 1</option>
+                        <option value="supplier2">Поставщик 2</option>
+                        <option value="supplier3">Поставщик 3</option>
+                    </select>
+                </div>
+            </form>
+            <!-- Контейнер для графика -->
+            <canvas id="priceChart"></canvas>
+        </div>
+    </div>
+</div>
+<!-- JavaScript код для создания графика -->
+<script>
+    // Данные для графика
+    const data = {
+        labels: ['1 квартал', '2 квартал', '3 квартал', '4 квартал'],
+        datasets: [
+            {
+                label: 'Поставщик 1',
+                data: [10, 20, 15, 25],
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: false
+            },
+            {
+                label: 'Поставщик 2',
+                data: [15, 25, 20, 30],
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                fill: false
+            },
+            {
+                label: 'Поставщик 3',
+                data: [20, 30, 25, 35],
+                borderColor: 'rgba(255, 206, 86, 1)',
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                fill: false
+            }
+        ]
+    };
+
+    // Опции для графика
+    const options = {
+        responsive: true,
+        title: {
+            display: true,
+            text: 'График цен поставщиков'
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    };
+
+    // Создание графика
+    const ctx = document.getElementById('priceChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: options
+    });	// Функция для обновления графика при изменении фильтра
+    document.getElementById('supplierSelect').addEventListener('change', function () {
+        const selectedSupplier = this.value;
+        if (selectedSupplier === 'all') {
+            // Показать данные всех поставщиков
+            chart.data.datasets.forEach(function (dataset) {
+                dataset.hidden = false;
+            });
+        } else {
+            // Скрыть данные всех поставщиков, кроме выбранного
+            chart.data.datasets.forEach(function (dataset) {
+                if (dataset.label === selectedSupplier) {
+                    dataset.hidden = false;
+                } else {
+                    dataset.hidden = true;
+                }
+            });
+        }
+        // Обновить график
+        chart.update();
+    });
+</script>
 
 <div>
     <footer class="bg-dark text-center text-white">

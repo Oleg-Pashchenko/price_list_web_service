@@ -14,7 +14,22 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
+    <style>.nav-tabs {
+        display: flex;
+        flex-wrap: wrap;
+    }
 
+    .nav-tabs > li {
+        width: 50%;
+        text-align: center;
+    }
+
+    .nav-tabs > li > a {
+        margin-right: 0;
+        margin-left: 0;
+        border-radius: 0;
+        border: none;
+    }</style>
     <title>Товары</title>
 </head>
 <body>
@@ -46,75 +61,148 @@
     </div>
 </nav>
 <div class="container my-5">
-    <h2 class="text-center">Create/Edit/Delete Product</h2>
+    <h2 class="text-center">Создать товар вручную</h2>
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#create-edit-delete-product">Create/Edit/Delete
-                Product</a>
+            <a class="nav-link active" data-toggle="tab" href="#create-product">Создать товар вручную</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#import-export-product">Import/Export Product</a>
+            <a class="nav-link" data-toggle="tab" href="#import-products">Импортировать товары</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#import-synonym">Import Synonym</a>
+            <a class="nav-link" data-toggle="tab" href="#import-synonyms">Импортировать синонимы</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#export-products">Экспортировать товары</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#edit-product">Редактировать товар</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#delete-product">Удалить товар</a>
+        </li>
+
     </ul>
 
     <!-- Tab Content -->
     <div class="tab-content">
         <!-- Create/Edit/Delete Product Tab -->
-        <div class="tab-pane container active" id="create-edit-delete-product">
+        <div class="tab-pane container active" id="create-product">
             <form>
                 <!-- Product Name -->
                 <div class="form-group">
-                    <label for="product-name">Product Name</label>
-                    <input type="text" class="form-control" id="product-name" placeholder="Enter Product Name">
+                    <label for="product-name">Название товара:</label>
+                    <input type="text" class="form-control" id="product-name" placeholder="Введите название товара">
                 </div>
                 <!-- Category -->
                 <div class="form-group">
-                    <label for="category">Category</label>
+                    <label for="category">Категория:</label>
                     <select class="form-control" id="category">
-                        <option>Select Category</option>
-                        <option>Category 1</option>
-                        <option>Category 2</option>
-                        <option>Category 3</option>
+                        {% for category in categories %}
+                            {{ category }}
+                        {% endfor %}
                     </select>
                 </div>
                 <!-- Synonyms -->
                 <div class="form-group">
-                    <label for="synonyms">Synonyms</label>
+                    <label for="synonyms">Синонимы:</label>
                     <input type="text" class="form-control" id="synonyms"
-                           placeholder="Enter Synonyms (separated by comma)">
+                           placeholder="Введите синонимы (разделяйте их запятой)">
                 </div>
                 <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </form>
+        </div>
+
+
+        <div class="tab-pane container" id="edit-product">
+            <form>
+                <!-- Product Name -->
+                <div class="form-group">
+                    <label for="product-name">Название товара:</label>
+                    <input type="text" class="form-control" id="product-name" placeholder="Введите название товара">
+                </div>
+                <!-- Category -->
+                <div class="form-group">
+                    <label for="category">Категория:</label>
+                    <select class="form-control" id="category">
+                        {% for category in categories %}
+                            {{ category }}
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- Synonyms -->
+                <div class="form-group">
+                    <label for="synonyms">Синонимы:</label>
+                    <input type="text" class="form-control" id="synonyms"
+                           placeholder="Введите синонимы (разделяйте их запятой)">
+                </div>
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">Добавить</button>
             </form>
         </div>
 
         <!-- Import/Export Product Tab -->
-        <div class="tab-pane container" id="import-export-product">
-
-            <!-- File Input -->
-
-
-            <!-- Submit Button -->
+        <div class="tab-pane container" id="import-products">
             <form class="form mt-5">
-                <input type="file" class="form-control-file" id="import-product-file">
+                <div class="form-group">
+                    <label for="category-name">Наименование</label>
+                    <input type="text" class="form-control" id="category-name" name="name"
+                           placeholder="Введите столбец с наименованием">
+                </div>
+                <div class="form-group">
+                    <label for="category-name">Категория</label>
+                    <input type="text" class="form-control" id="category-value" name="name"
+                           placeholder="Введите столбец с именами категорий">
+                </div>
+                <input type="file" class="form-control-file" id="import-products-i">
                 <br/>
-                <button type="submit" class="btn btn-primary">Import</button>
-                <button type="submit" class="btn btn-primary">Export</button>
+                <button type="submit" class="btn btn-primary">Импорт</button>
             </form>
 
         </div>
 
+
+        <div class="tab-pane container" id="import-synonyms">
+            <form class="form mt-5">
+                <div class="form-group">
+                    <label for="category-name">ID</label>
+                    <input type="text" class="form-control" id="category-name" name="name"
+                           placeholder="Введите столбец с id">
+                </div>
+                <div class="form-group">
+                    <label for="category-name">Синонимы</label>
+                    <input type="text" class="form-control" id="category-id" name="name"
+                           placeholder="Введите столбец с синонимами">
+                </div>
+                <input type="file" class="form-control-file" id="import-synonyms-i">
+                <br/>
+                <button type="submit" class="btn btn-primary">Импорт</button>
+            </form>
+
+        </div>
+
+        <div class="tab-pane container" id="delete-product">
+            <form class="form mt-5">
+                <div class="form-group">
+                    <label for="category">Товар:</label>
+                    <select class="form-control" id="category">
+                        {% for product in products %}
+                            {{ product }}
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Удалить</button>
+            </form>
+
+        </div>
         <!-- Import Synonym Tab -->
-        <div class="tab-pane container" id="import-synonym">
-            <div class="tab-pane container" id="import-synonym">
+        <div class="tab-pane container" id="export-products">
+            <div class="tab-pane container" id="export-products">
                 <form action="/import-synonyms" method="post" enctype="multipart/form-data" class="form mt-5">
-                    <div class="form-group">
-                        <input type="file" class="form-control-file" id="file" name="file">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Import</button>
+                    <button type="submit" class="btn btn-primary">Экспортировать продукты</button>
                 </form>
             </div>
         </div>
