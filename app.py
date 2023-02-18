@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, redirect, render_template, request, jsonify
+from flask import Flask, redirect, render_template, request, jsonify, send_file
 from datetime import datetime
 
 import logic
@@ -85,7 +85,69 @@ def edit_order():
 
 @app.route('/items', methods=['GET'])
 def items():
-    return render_template('items.html')
+    categories = db.get_all_categories()
+    products = db.get_all_items()
+    print(items)
+    return render_template('items.html', categories=categories, products=products)
+
+
+# TODO: FROM THIS
+@app.route('/items/add', methods=["POST"])
+def add_item():
+    name = request.form.get('item-add-name')
+    category = request.form.get('item-add-category')
+    synonyms = request.form.get('item-add-synonyms')
+    db.create_new_item(name, category, synonyms)
+    return redirect('/items')
+
+
+@app.route('/items/import-items', methods=["POST"])
+def import_items_items():
+    name = request.form.get('import_name')
+    category = request.form.get('import_category')
+    file = request.files['fileUpload_items']
+    file.save('import-items.xlsx')
+    data, _ = logic.load_from_excel(0, name, category, 'import-items.xlsx')
+    for i in data:
+        db.write_import_items(i[0], i[1])
+    return redirect('/items')
+
+
+@app.route('/items/import-synonims', methods=["POST"])
+def import_synonims():
+    idx = request.form.get('import_id')
+    synonyms = request.form.get('import_synonyms')
+    file = request.files['fileUpload_synonyms']
+    file.save('import-synonims.xlsx')
+    data, _ = logic.load_from_excel(0, idx, synonyms, 'import-synonims.xlsx')
+    for i in data:
+        db.write_import_synonyms(i[0], i[1])
+    return redirect('/items')
+
+
+@app.route('/items/export-items', methods=["POST"])
+def export_items():
+    logic.load_to_excel()
+    return send_file('export.xlsx', as_attachment=True)
+
+
+
+@app.route('/items/edit-items', methods=["POST"])
+def edit_item():
+    edit_product = request.form.get('edit-products')
+    edit_category = request.form.get('edit-categories')
+    edit_synonyms = request.form.get('edit-synonyms')
+    print(edit_product, edit_category, edit_synonyms)
+    db.edit_item(edit_product, edit_synonyms, edit_category)
+    print('yes')
+    return redirect('/items')
+
+
+@app.route('/items/delete-item', methods=["POST"])
+def delete_item():
+    delete_item_v = request.form.get('delete-item')
+    db.delete_item(delete_item_v)
+    return redirect('/items')
 
 
 @app.route('/import', methods=['GET'])
@@ -130,18 +192,17 @@ def import_items_post():
 
 @app.route('/prices', methods=['GET'])
 def prices():
-    return render_template('prices.html')
+    categories = db.get_all_categories()
+    products = db.get_items()
+    return render_template('prices.html', categories=categories, products=products)
 
 
-"""
+@app.route('/prices/export', methods=['GET'])
+def prices_export():
+    logic.load_to_excel()
+    return send_file('export.xlsx', as_attachment=True)
 
-@app.route('/download')
-def download():
-    # path to the file to be downloaded
-    filepath = '/path/to/file.txt'
 
-    # send the file as an attachment to the client
-    return send_file(filepath, as_attachment=True)
-    """
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000, use_reloader=False)

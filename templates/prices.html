@@ -54,16 +54,22 @@
 <div class="container mt-5">
     <h1 class="text-center">Цены на товары</h1>
     <form action="" method="post">
-        <div class="form-group">
+        <div class="row">
+            <div class="col-sm">
             <div class="form-group">
                 <label for="inputDate">Введите начало промежутка:</label>
                 <input id="inputDate" type="date" class="form-control">
             </div>
+            </div>
+            <div class="col-sm">
             <div class="form-group">
                 <label for="inputDate2">Введите конец промежутка:</label>
                 <input id=inputDate2"" type="date" class="form-control">
             </div>
+            </div>
         </div>
+    <div class="row">
+    <div class="col-sm">
         <div class="form-group">
             <label for="category_filter">Фильтр категорий:</label>
             <select class="form-control" id="category_filter">
@@ -73,6 +79,8 @@
                 {% endfor %}
             </select>
         </div>
+    </div>
+    <div class="col-sm">
         <div class="form-group">
             <label for="price_filter">Фильтр цены:</label>
             <select class="form-control" id="price_filter">
@@ -82,6 +90,8 @@
                 <option value="unavailable">Нет</option>
             </select>
         </div>
+    </div>
+    <div class="col-sm">
         <div class="form-group">
             <label for="sort">Сортировка:</label>
             <select class="form-control" id="sort">
@@ -91,36 +101,36 @@
                 <option value="product">Продукт</option>
             </select>
         </div>
+    </div>
+    </div>
         <div class="form-group">
             <label for="search">Поиск по запросу:</label>
             <input type="text" class="form-control" id="search">
         </div>
         <button type="submit" class="btn btn-success">Получить данные</button>
-        <a href="" class="btn btn-primary">Экспортировать</a>
+        <a href="/prices/export" class="btn btn-primary">Экспортировать</a>
     </form>
     <br>
     <table class="table">
         <thead>
         <tr>
-            <th>Категория</th>
-            <th>Продукт</th>
-            <th>Лучшая цена</th>
+            <th>Имя</th>
+            <th>Дата</th>
+            <th>Цена</th>
             <th>Поставщик</th>
+            <th>Синонимы</th>
+            <th>Категория</th>
         </tr>
         </thead>
         <tbody>
-        <tr data-toggle="modal" data-target="#exampleModal">
-            <td>Тест категория</td>
-            <td>Тест имя</td>
-            <td>Тест лучшая цена</td>
-            <td>Тест поставщик</td>
-        </tr>
         {% for product in products %}
-            <tr>
-                <td>{{ product.category }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.best_price }}</td>
-                <td>{{ product.supplier }}</td>
+            <tr data-toggle="modal" data-target="#exampleModal">
+                <td>{{ product[0] }}</td>
+                <td>{{ product[1] }}</td>
+                <td>{{ product[2] }}</td>
+                <td>{{ product[3] }}</td>
+                <td>{{ product[4] }}</td>
+                <td>{{ product[5] }}</td>
             </tr>
         {% endfor %}
         </tbody>

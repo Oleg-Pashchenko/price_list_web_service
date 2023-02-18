@@ -1,3 +1,4 @@
+import datetime
 import os
 
 import psycopg2
@@ -73,6 +74,33 @@ def get_all_categories():
     return [dict(name=row[0], order_index=row[1]) for row in rows]
 
 
+def get_all_items():
+    with conn.cursor() as cur:
+        cur.execute("SELECT * from items")
+        rows = cur.fetchall()
+    return [dict(name=row[0], date=row[1], price=row[2], supplier_name=row[3], synonyms=row[4]) for row in rows]
+
+
+def create_new_item(name, synonyms, category):
+    with conn.cursor() as cur:
+        cur.execute('INSERT INTO items (name, date, synonyms, category) VALUES (%s, NOW(), %s, %s)',
+                    (name, synonyms, category))
+        conn.commit()
+
+
+def edit_item(name, synonyms, category):
+    with conn.cursor() as cur:
+        cur.execute('UPDATE items SET date = NOW(), synonyms = %s, category = %s WHERE name=%s',
+                    (synonyms, category, name))
+        conn.commit()
+
+
+def delete_item(name):
+    with conn.cursor() as cur:
+        cur.execute('DELETE FROM items WHERE name=%s', (name,))
+        conn.commit()
+
+
 def write_items(data, date, supplier):
     cur = conn.cursor()
     for i in data:
@@ -81,3 +109,22 @@ def write_items(data, date, supplier):
         cur.execute("INSERT INTO items (name, date, price, supplier_name) VALUES (%s, %s, %s, %s)",
                     (name, date, price, supplier))
     conn.commit()
+
+
+def write_import_items(name, categorie):
+    cur = conn.cursor()
+    cur.execute("INSERT INTO items (name, date, category) VALUES (%s, NOW(), %s)", (name, categorie))
+    cur.commit()
+
+
+def write_import_synonyms(name, synonyms):
+    cur = conn.cursor()
+    cur.execute("UPDATE items SET synonyms = %s WHERE name=%s", (synonyms, name))
+    cur.commit()
+
+
+def get_items():
+    cur = conn.cursor()
+    cur.execute("SELECT * from items")
+    rows = cur.fetchall()
+    return rows

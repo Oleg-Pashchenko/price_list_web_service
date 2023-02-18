@@ -61,7 +61,6 @@
     </div>
 </nav>
 <div class="container my-5">
-    <h2 class="text-center">Создать товар вручную</h2>
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#create-product">Создать товар вручную</a>
@@ -90,25 +89,25 @@
     <div class="tab-content">
         <!-- Create/Edit/Delete Product Tab -->
         <div class="tab-pane container active" id="create-product">
-            <form>
+            <form action="/items/add" method="post">
                 <!-- Product Name -->
                 <div class="form-group">
                     <label for="product-name">Название товара:</label>
-                    <input type="text" class="form-control" id="product-name" placeholder="Введите название товара">
+                    <input type="text" class="form-control" id="product-name" placeholder="Введите название товара" name="item-add-name">
                 </div>
                 <!-- Category -->
                 <div class="form-group">
                     <label for="category">Категория:</label>
-                    <select class="form-control" id="category">
+                    <select class="form-control" id="category" name="item-add-category">
                         {% for category in categories %}
-                            {{ category }}
+                            <option>{{ category.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <!-- Synonyms -->
                 <div class="form-group">
                     <label for="synonyms">Синонимы:</label>
-                    <input type="text" class="form-control" id="synonyms"
+                    <input type="text" class="form-control" id="synonyms" name="item-add-synonyms"
                            placeholder="Введите синонимы (разделяйте их запятой)">
                 </div>
                 <!-- Submit Button -->
@@ -118,25 +117,29 @@
 
 
         <div class="tab-pane container" id="edit-product">
-            <form>
+            <form action="/items/edit-items" method="POST">
                 <!-- Product Name -->
                 <div class="form-group">
-                    <label for="product-name">Название товара:</label>
-                    <input type="text" class="form-control" id="product-name" placeholder="Введите название товара">
+                    <label for="category">Товар:</label>
+                    <select class="form-control" id="category" name="edit-products">
+                        {% for product in products %}
+                            <option>{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <!-- Category -->
                 <div class="form-group">
-                    <label for="category">Категория:</label>
-                    <select class="form-control" id="category">
+                    <label for="category-t">Категория:</label>
+                    <select class="form-control" id="category-t" name="edit-categories">
                         {% for category in categories %}
-                            {{ category }}
+                            <option>{{ category.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <!-- Synonyms -->
                 <div class="form-group">
                     <label for="synonyms">Синонимы:</label>
-                    <input type="text" class="form-control" id="synonyms"
+                    <input type="text" class="form-control" id="synonyms" name="edit-synonyms"
                            placeholder="Введите синонимы (разделяйте их запятой)">
                 </div>
                 <!-- Submit Button -->
@@ -146,18 +149,18 @@
 
         <!-- Import/Export Product Tab -->
         <div class="tab-pane container" id="import-products">
-            <form class="form mt-5">
+            <form action="/items/import-items" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="category-name">Наименование</label>
-                    <input type="text" class="form-control" id="category-name" name="name"
+                    <input type="text" class="form-control" id="category-name" name="import_name"
                            placeholder="Введите столбец с наименованием">
                 </div>
                 <div class="form-group">
                     <label for="category-name">Категория</label>
-                    <input type="text" class="form-control" id="category-value" name="name"
+                    <input type="text" class="form-control" id="category-value" name="import_category"
                            placeholder="Введите столбец с именами категорий">
                 </div>
-                <input type="file" class="form-control-file" id="import-products-i">
+                <input type="file" class="form-control-file" name="fileUpload_items">
                 <br/>
                 <button type="submit" class="btn btn-primary">Импорт</button>
             </form>
@@ -166,18 +169,18 @@
 
 
         <div class="tab-pane container" id="import-synonyms">
-            <form class="form mt-5">
+            <form action="/items/import-synonims" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label for="category-name">ID</label>
-                    <input type="text" class="form-control" id="category-name" name="name"
+                    <label for="category-name">Имя</label>
+                    <input type="text" class="form-control" id="category-name" name="import_id"
                            placeholder="Введите столбец с id">
                 </div>
                 <div class="form-group">
                     <label for="category-name">Синонимы</label>
-                    <input type="text" class="form-control" id="category-id" name="name"
+                    <input type="text" class="form-control" id="category-id" name="import_synonyms"
                            placeholder="Введите столбец с синонимами">
                 </div>
-                <input type="file" class="form-control-file" id="import-synonyms-i">
+                <input type="file" class="form-control-file" name="fileUpload_synonyms">
                 <br/>
                 <button type="submit" class="btn btn-primary">Импорт</button>
             </form>
@@ -185,12 +188,12 @@
         </div>
 
         <div class="tab-pane container" id="delete-product">
-            <form class="form mt-5">
+            <form  action="/items/delete-item" method="POST">
                 <div class="form-group">
                     <label for="category">Товар:</label>
-                    <select class="form-control" id="category">
+                    <select class="form-control" id="category" name="delete-item">
                         {% for product in products %}
-                            {{ product }}
+                            <option>{{ product.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -201,7 +204,7 @@
         <!-- Import Synonym Tab -->
         <div class="tab-pane container" id="export-products">
             <div class="tab-pane container" id="export-products">
-                <form action="/import-synonyms" method="post" enctype="multipart/form-data" class="form mt-5">
+                <form action="/items/export-items" method="post" enctype="multipart/form-data" class="form mt-5">
                     <button type="submit" class="btn btn-primary">Экспортировать продукты</button>
                 </form>
             </div>
